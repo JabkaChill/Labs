@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-namespace Lab_1
+﻿namespace Lab_1
 {
     class Program
     {
@@ -9,14 +8,30 @@ namespace Lab_1
             {
                 try
                 {
-                    Console.WriteLine("Введите арифметическое выражение с пробелами между числами и оператором():");
-                    string exp = "";
-                    exp = Console.ReadLine();
-                    string[] dig = exp.Split(' ');
-                    double dig1 = Convert.ToDouble(dig[0]);
-                    double dig2 = Convert.ToDouble(dig[2]);
-                    string operand = dig[1];
+                    Console.WriteLine("Введите выражение с пробелами между числами и оператором(например: 22 + 30):");
+                    string exp = Console.ReadLine().Trim();
+                    string[] parts = exp.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+                    if (parts.Length < 2)
+                    {
+                        Console.WriteLine("Ошибка: неверный формат ввода!");
+                        continue;
+                    }
+
+                    string operand = parts[1];
                     double ans = 0;
+                    double dig1 = 0;
+                    double dig2 = 0;
+
+                    if (parts.Length == 3)
+                    {
+                        dig1 = Convert.ToDouble(parts[0]);
+                        dig2 = Convert.ToDouble(parts[2]);
+                    }
+                    else if (parts.Length == 2)
+                    {
+                        dig1 = Convert.ToDouble(parts[0]);
+                    }
 
                     switch (operand)
                     {
@@ -30,13 +45,15 @@ namespace Lab_1
                             ans = dig1 * dig2;
                             break;
                         case "/":
+                            if (dig2 == 0)
+                                throw new DivideByZeroException();
                             ans = dig1 / dig2;
                             break;
                         case "^":
                             ans = Math.Pow(dig1, dig2);
                             break;
                         case "sqrt":
-                            ans = Math.Pow(dig1, 1 / dig2);
+                            ans = Math.Pow(dig1, 1.0 / dig2);
                             break;
                         case "log":
                             ans = Math.Log(dig1, dig2);
@@ -44,8 +61,16 @@ namespace Lab_1
                         case "ln":
                             ans = Math.Log(dig1);
                             break;
+                        default:
+                            Console.WriteLine("Неизвестный оператор!");
+                            continue;
                     }
-                    Console.WriteLine("\n Ответ: " + exp + " = " + Convert.ToString(ans));
+
+                    Console.WriteLine($"\nОтвет: {exp} = {ans}");
+                }
+                catch (DivideByZeroException)
+                {
+                    Console.WriteLine("Деление на ноль!");
                 }
                 catch
                 {
